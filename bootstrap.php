@@ -49,7 +49,7 @@ Event::register_function('front.display', function(&$html)
         $item = \Nos\Nos::main_controller()->getItemDisplayed();
         $methodVariable = array($item, 'setTwitterCardTags');
         if (is_callable($methodVariable)) {
-            $item->setTwitterCardTags();
+            $html = $item->setTwitterCardTags($html);
         }
     }
 });

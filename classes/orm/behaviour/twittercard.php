@@ -39,7 +39,7 @@ class Orm_Behaviour_TwitterCard extends Orm_Behaviour
     /**
      * Add the twitter card tags
      */
-    public function setTwitterCardTags(\Nos\Orm\Model $item)
+    public function setTwitterCardTags(\Nos\Orm\Model $item, $html)
     {
         $config = Controller_Admin_Config::getOptions();
         $config = \Arr::get($config, \Nos\Nos::main_controller()->getContext());
@@ -126,13 +126,21 @@ class Orm_Behaviour_TwitterCard extends Orm_Behaviour
             }
         }
 
-        \Nos\Nos::main_controller()->addMeta('<meta name="twitter:card" content="'.$type.'">');
-        \Nos\Nos::main_controller()->addMeta('<meta name="twitter:site" content="@'.$site_username.'">');
-        \Nos\Nos::main_controller()->addMeta('<meta name="twitter:title" content="'.$title.'">');
-        \Nos\Nos::main_controller()->addMeta('<meta name="twitter:description" content="'.$summary.'">');
-        \Nos\Nos::main_controller()->addMeta('<meta name="twitter:creator" content="@'.$creator_username.'">');
+        $meta_tags = '';
+        $meta_tags .= '<meta name="twitter:card" content="'.$type.'">'."\n";
+        $meta_tags .= '<meta name="twitter:site" content="@'.$site_username.'">'."\n";
+        $meta_tags .= '<meta name="twitter:title" content="'.$title.'">'."\n";
+        $meta_tags .= '<meta name="twitter:description" content="'.$summary.'">'."\n";
+        $meta_tags .= '<meta name="twitter:creator" content="@'.$creator_username.'">'."\n";
         if (!empty($img_url)) {
-            \Nos\Nos::main_controller()->addMeta('<meta name="twitter:image:src" content="'.$img_url.'">');
+            $meta_tags .= '<meta name="twitter:image:src" content="'.$img_url.'">'."\n";
         }
+
+        preg_match("/<\/head>/", $html, $matches);
+        if (!empty($matches) && isset($matches[0])) {
+            $html = str_replace($matches[0], $meta_tags.$matches[0], $html);
+        }
+
+        return $html;
     }
 }
