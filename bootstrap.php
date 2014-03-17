@@ -7,7 +7,10 @@
     $config['behaviours']['Twitter\Card\Orm_Behaviour_TwitterCard'] = array(
         'fields' => array(
             'title' => 'page_title',
-            'summary' => 'wysiwygs->content',
+            'summary' => array(
+                'page_meta_description',
+                'wysiwygs->content',
+            ),
         ),
         'type' => 'summary', //Summary type is forced beacause there is no image on pages
     );

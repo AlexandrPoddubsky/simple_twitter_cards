@@ -43,6 +43,10 @@ class Orm_Behaviour_TwitterCard extends Orm_Behaviour
     {
         $config = Controller_Admin_Config::getOptions();
         $config = \Arr::get($config, \Nos\Nos::main_controller()->getContext());
+
+        /* if there is no configuration for the context, return the html with no modification */
+        if (empty($config)) return $html;
+
         if (\Arr::get($this->_properties, 'type', false)) {
             $type = \Arr::get($this->_properties, 'type');
         } else {
@@ -53,66 +57,18 @@ class Orm_Behaviour_TwitterCard extends Orm_Behaviour
         $creator_username = \Arr::get($config, 'creator_username');
         if (\Str::starts_with($creator_username, '@')) $creator_username = \Str::sub($creator_username,1);
 
-        //Parsing field value if there is field name with acessor in it.
-        if(!is_array(\Arr::get($this->_properties, 'fields'))) {
-            \Arr::set($this->_properties, 'fields', array());
-        }
-        foreach (\Arr::get($this->_properties, 'fields') as $field_prop => $field_name) {
-            $field_name = explode('->', $field_name);
-            if (count($field_name) == 1) $field_name = reset($field_name);
-            \Arr::set($this->_properties, 'fields.'.$field_prop, $field_name);
-        }
+        $tags_values = $this->_getTagsValues($item);
 
-        if (is_array(\Arr::get($this->_properties, 'fields.title'))) {
-            $value = false;
-            foreach (\Arr::get($this->_properties, 'fields.title') as $field_acessor) {
-                if ($value === false) {
-                    $value = $item->{$field_acessor};
-                } else if (is_object($value)) {
-                    $value = $value->{$field_acessor};
-                }
-            }
-            $title = !empty($value) ? $value : '';
-        } else {
-            $title = isset($item->{\Arr::get($this->_properties, 'fields.title')}) ? $item->get(\Arr::get($this->_properties, 'fields.title')) : '';
-        }
+        $title = \Arr::get($tags_values, 'title');
 
-        if (is_array(\Arr::get($this->_properties, 'fields.summary'))) {
-            $value = false;
-            foreach (\Arr::get($this->_properties, 'fields.summary') as $field_acessor) {
-                if ($value === false) {
-                    $value = $item->{$field_acessor};
-                } else if (is_object($value)) {
-                    $value = $value->{$field_acessor};
-                }
-            }
-            $summary = !empty($value) ? $value : '';
-        } else {
-            $summary = isset($item->{\Arr::get($this->_properties, 'fields.summary')}) ? $item->get(\Arr::get($this->_properties, 'fields.summary')) : '';
-        }
+        $summary = \Arr::get($tags_values, 'summary');
         if (\Str::is_html($summary)) $summary = strip_tags($summary);
         $summary = \Str::truncate($summary, 197);
-        $tab = array( CHR(13) => " ", CHR(10) => " " );
+        $tab = array(CHR(13) => " ", CHR(10) => " " );
         $summary = strtr($summary,$tab);
 
         $img_url = '';
-        $image = null;
-        if (is_array(\Arr::get($this->_properties, 'fields.image'))) {
-            $value = false;
-            foreach (\Arr::get($this->_properties, 'fields.image') as $field_acessor) {
-                if ($value === false) {
-                    $value = $item->{$field_acessor};
-                } else if (is_object($value)) {
-                    $value = $value->{$field_acessor};
-                }
-            }
-            $image = !empty($value) ? $value : null;
-        } else {
-            if (isset($item->medias->{\Arr::get($this->_properties, 'fields.image')})) {
-                $image = $item->medias->{\Arr::get($this->_properties, 'fields.image')};
-            }
-        }
-
+        $image = \Arr::get($tags_values, 'image', null);
         if (empty($image) && \Arr::get($config, 'default_img')) {
             $image = \Nos\Media\Model_Media::find(\Arr::get($config, 'default_img'));
         }
@@ -142,5 +98,71 @@ class Orm_Behaviour_TwitterCard extends Orm_Behaviour
         }
 
         return $html;
+    }
+
+    /**
+     * @param \Orm\Model $item
+     * @return array
+     */
+    private function _getTagsValues($item) {
+        $fields = \Arr::get($this->_properties, 'fields');
+        if (empty($fields)) return array();
+
+        $values = array(
+            'title' => '',
+            'summary' => '',
+            'image' => '',
+        );
+
+        foreach ($fields as $field_label => $field_possibilities) {
+            if (is_array($field_possibilities)) {
+                \Arr::set($values, $field_label, $this->_getTagValueFromArray($item, $field_label, $field_possibilities));
+            } else {
+                \Arr::set($values, $field_label, $this->_getTagValue($item, $field_label, $field_possibilities));
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * @param \Orm\Model $item
+     * @param string $field_label
+     * @param array $field_name_possibilities
+     * @return mixed
+     */
+    private function _getTagValue($item, $field_label, $field_name) {
+        $field_name_part = explode('->', $field_name);
+        $value = false;
+        //If we are in a image case, the default assecor is medias
+        if ($field_label == 'image' && count($field_name_part) == 1) {
+            $field_name_part = array(
+                'medias',
+                reset($field_name_part),
+            );
+        }
+        foreach ($field_name_part as $field_acessor){
+            if ($value === false) {
+                $value = $item->{$field_acessor};
+            } else if (is_object($value)) {
+                $value = $value->{$field_acessor};
+            }
+        }
+        return $value;
+    }
+
+    /**
+     * @param \Orm\Model $item
+     * @param string $field_label
+     * @param array $field_name_possibilities
+     * @return mixed
+     */
+    private function _getTagValueFromArray($item, $field_label, $field_name_possibilities) {
+        $value = false;
+        foreach ($field_name_possibilities as $field_name) {
+            $value = $this->_getTagValue($item, $field_label, $field_name);
+            if (!empty($value)) break;
+        }
+        return $value;
     }
 }
