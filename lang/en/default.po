@@ -1,0 +1,63 @@
+#: config/controller/admin/config.config.php:3
+msgid "Simple Twitter cards"
+msgstr ""
+
+#: config/controller/admin/config.config.php:15
+msgid "Général"
+msgstr ""
+
+#: config/controller/admin/config.config.php:39
+msgid "Images"
+msgstr ""
+
+#: config/controller/admin/config.config.php:61
+msgid "Choisissez votre type de card :"
+msgstr ""
+
+#: config/controller/admin/config.config.php:65
+msgid "Résumé"
+msgstr ""
+
+#: config/controller/admin/config.config.php:66
+msgid "Résumé à grande image"
+msgstr ""
+
+#: config/controller/admin/config.config.php:67
+msgid "Photo"
+msgstr ""
+
+#: config/controller/admin/config.config.php:72
+msgid "Entrez votre compte Twitter personnel :"
+msgstr ""
+
+#: config/controller/admin/config.config.php:78
+msgid "Entrez le compte Twitter associé au site web :"
+msgstr ""
+
+#: config/controller/admin/config.config.php:84
+msgid "Choisissez la taille de l'image :"
+msgstr ""
+
+#: config/controller/admin/config.config.php:88
+msgid "Mobile à affichage non retina (largeur: 280px - longueur: 375px)"
+msgstr ""
+
+#: config/controller/admin/config.config.php:89
+msgid "Mobile à affichage retina (largeur: 560px - longueur: 750px)"
+msgstr ""
+
+#: config/controller/admin/config.config.php:90
+msgid "Taille max pour le web (largeur: 435px - longueur: 375px)"
+msgstr ""
+
+#: config/controller/admin/config.config.php:91
+msgid "Petit (largeur: 280px - longueur: 150px)"
+msgstr ""
+
+#: config/controller/admin/config.config.php:96
+msgid "Forcer le recadrage de l'image de la card :"
+msgstr ""
+
+#: config/controller/admin/config.config.php:104
+msgid "Image par défaut des cards :"
+msgstr ""
