@@ -73,12 +73,14 @@ $config = array(
             'form' => array(
                 'type' => 'text',
             ),
+            'template' => '<tr><td>{label}</td><td>{field}<span style="font-size:11px;color:#ccc;">'.__('(optionnel)').'</span></td></tr>',
         ),
         'site_username' => array(
             'label' => __('Entrez le compte Twitter associé au site web :'),
             'form' => array(
                 'type' => 'text',
             ),
+            'template' => '<tr><td>{label}</td><td>{field}<span style="font-size:11px;color:#ccc;">'.__('(optionnel)').'</span></td></tr>',
         ),
         'img_size' => array(
             'label' => __('Choisissez la taille de l\'image :'),
