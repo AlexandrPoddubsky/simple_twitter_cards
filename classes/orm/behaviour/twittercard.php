@@ -82,12 +82,21 @@ class Orm_Behaviour_TwitterCard extends Orm_Behaviour
             }
         }
 
+        if (empty($type) || empty($title) || empty($summary)) {
+            \Log::warning('Simple Twitter card : need more information to show a twitter card for '.get_class($item).' id :'.$item->get('id'));
+            return $html;
+        }
+
         $meta_tags = '';
         $meta_tags .= '<meta name="twitter:card" content="'.$type.'">'."\n";
-        $meta_tags .= '<meta name="twitter:site" content="@'.$site_username.'">'."\n";
         $meta_tags .= '<meta name="twitter:title" content="'.$title.'">'."\n";
         $meta_tags .= '<meta name="twitter:description" content="'.$summary.'">'."\n";
-        $meta_tags .= '<meta name="twitter:creator" content="@'.$creator_username.'">'."\n";
+        if (!empty($site_username)) {
+            $meta_tags .= '<meta name="twitter:site" content="@'.$site_username.'">'."\n";
+        }
+        if (!empty($creator_username)) {
+            $meta_tags .= '<meta name="twitter:creator" content="@'.$creator_username.'">'."\n";
+        }
         if (!empty($img_url)) {
             $meta_tags .= '<meta name="twitter:image:src" content="'.$img_url.'">'."\n";
         }
