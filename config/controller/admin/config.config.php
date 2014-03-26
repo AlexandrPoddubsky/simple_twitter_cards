@@ -28,6 +28,25 @@ $config = array(
                             ),
                         ),
                     ),
+                    2 => array(
+                        'col_number' => 6,
+                        'view' => 'nos::form/expander',
+                        'params' => array(
+                            'title'   => __('Twitter card validator'),
+                            'options' => array(
+                                'allowExpand' => true,
+                                'expanded' => false
+                            ),
+                            'content' => array(
+                                'view' => 'nos::form/fields',
+                                'params' => array(
+                                    'fields' => array(
+                                        'validator',
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
             ),
             2 => array(
@@ -107,6 +126,13 @@ $config = array(
             'form' => array(
             ),
             'renderer' => '\Nos\Media\Renderer_Media',
+        ),
+        'validator' => array(
+            'label' => __('How to validate your cards:'),
+            'form' => array(
+                'value' => \View::forge('simple_twitter_cards::admin/validator'),
+            ),
+            'renderer' => '\Nos\Renderer_Text',
         ),
     ),
 );
