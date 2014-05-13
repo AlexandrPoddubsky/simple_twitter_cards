@@ -50,8 +50,8 @@ Event::register_function('front.display', function(&$html)
     $methodVariable = array(\Nos\Nos::main_controller(), 'getItemDisplayed');
     if (is_callable($methodVariable)) {
         $item = \Nos\Nos::main_controller()->getItemDisplayed();
-        $methodVariable = array($item, 'setTwitterCardTags');
-        if (is_callable($methodVariable)) {
+        $behaviour = $item->behaviours('Twitter\Card\Orm_Behaviour_TwitterCard');
+        if (!empty($behaviour)) {
             $html = $item->setTwitterCardTags($html);
         }
     }
